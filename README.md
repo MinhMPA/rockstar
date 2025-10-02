@@ -12,9 +12,9 @@ make
 ```
 or
 ```
-make -j n
+make withd_hdf5
 ```
-where n is the number of parallel independent recipes.
+for HDF5-format I/O support.
 
 ## Reference
 
