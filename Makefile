@@ -17,14 +17,13 @@ CC      ?= cc
 CFLAGS  ?= -Wall -fno-math-errno -fPIC -m64 -O3 -std=c99 -g
 
 # Linker flags may include rpath options or other linker-specific flags.
-LDFLAGS ?=
+LDFLAGS ?= -shared
 
 # Extra flags used by some targets.  Users can override this when needed.
 EXTRA_FLAGS ?=
 
 # Flags passed when building shared objects.  Typically contains
-# `-shared -Wl,-soname,librockstar.so` on ELF systems.  Adjust as needed.
-OFLAGS  ?= -shared
+OFLAGS  ?= -lm -O3 -std=c99 -rdynamic -g
 
 # Optional flags
 ## HDF5 format support
@@ -76,17 +75,8 @@ LIBS   += -lm
 ##############################
 
 # List of C files used by multiple targets.  If you add or remove
-# source files, update this variable accordingly.  The ordering of
-# object files at link time matters because libraries must follow
-# objects that reference them.
-CFILES = rockstar.c check_syscalls.c fof.c groupies.c \
-	subhalo_metric.c potential.c nfw.c jacobi.c fun_times.c \
-	interleaving.c universe_time.c hubble.c integrate.c distance.c \
-	config_vars.c config.c bounds.c inthash.c io/read_config.c \
-	client.c server.c merger.c inet/socket.c inet/rsocket.c inet/address.c \
-	io/meta_io.c io/io_internal.c io/io_ascii.c io/stringparse.c \
-	io/io_gadget.c io/io_generic.c io/io_art.c io/io_tipsy.c \
-	io/io_bgc2.c io/io_util.c
+# source files, update this variable accordingly.
+CFILES = rockstar.c check_syscalls.c fof.c groupies.c subhalo_metric.c potential.c nfw.c jacobi.c fun_times.c interleaving.c universe_time.c hubble.c integrate.c distance.c config_vars.c config.c bounds.c inthash.c io/read_config.c client.c server.c merger.c inet/socket.c inet/rsocket.c inet/address.c io/meta_io.c io/io_internal.c io/io_ascii.c io/stringparse.c io/io_gadget.c io/io_generic.c io/io_art.c io/io_tipsy.c io/io_bgc2.c io/io_util.c io/io_arepo.c io/io_hdf5.c
 
 ##############################
 # Build rules
@@ -115,7 +105,7 @@ versiondist:
 # preceding object files.  EXTRA_FLAGS can contain additional
 # libraries or linker options supplied by the user.
 reg:
-	$(CC) $(CFLAGS) main.c $(CFILES) -o rockstar $(LDFLAGS) $(EXTRA_FLAGS) $(LIBS)
+	$(CC) $(CFLAGS) main.c $(CFILES) -o rockstar $(OFLAGS) $(EXTRA_FLAGS) $(LIBS)
 
 # Build the shared library version of ROCKSTAR.  The OFLAGS variable
 # should contain flags appropriate for creating a shared object (e.g.
@@ -148,7 +138,7 @@ with_debug:
 	@make reg EXTRA_FLAGS="$(DEBUGFLAGS)"
 # Build with support for HDF5 format
 with_hdf5:
-	@make reg EXTRA_FLAGS="$(OFLAGS) $(HDF5_FLAGS)"
+	@make reg EXTRA_FLAGS="$(HDF5_FLAGS) $(OFLAGS)"
 # Build for HDF5 support and debugging
 with_hdf5_debug:
 	@make reg EXTRA_FLAGS="$(DEBUGFLAGS) $(HDF5_FLAGS)"
