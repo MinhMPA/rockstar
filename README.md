@@ -1,14 +1,20 @@
 # ROCKSTAR halo finder
 
 This is a clone of the `Rockstar` repository on [bitbucket](https://bitbucket.org/gfcstanford/rockstar/src/main/), with an updated `Makefile` for compilation on modern Linux machines.
-
 Specifically, we have updated the path to `xdr` functions (now live in `libtprpc`).
+
+The original README can be found at [ORIGINAL_README.md](./ORIGINAL_README.md).
 
 ## Installation
 
 ```
-make -j8
+make
 ```
+or
+```
+make -j n
+```
+where n is the number of parallel independent recipes.
 
 ## Reference
 
