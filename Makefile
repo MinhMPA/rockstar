@@ -30,6 +30,15 @@ EXTRA_FLAGS ?=
 # `-shared -Wl,-soname,librockstar.so` on ELF systems.  Adjust as needed.
 OFLAGS  ?= -shared
 
+# Optional flags
+## HDF5 format support
+HDF5_HOME ?= "/mpcdf/soft/SLE_15/packages/skylake/hdf5/intel_21.5.0-2021.5.0-impi_2021.5-2021.5.0/1.14.0"
+HDF5_INC = ${HDF5_HOME}/include
+HDF5_LIB = ${HDF5_HOME}/lib
+HDF5_FLAGS = -DH5_USE_16_API -lhdf5 -DENABLE_HDF5 -I${HDF5_INC} -L${HDF5_LIB}
+## Debugging support
+DEBUGFLAGS = -lm -g -O0 -std=c99 -rdynamic
+
 ##############################
 # TIRPC/XDR detection
 ##############################
@@ -135,6 +144,14 @@ parents:
 # subhalo_stats.c and the rest of the CFILES used by the main build.
 substats:
 	$(CC) $(CFLAGS) util/subhalo_stats.c $(CFILES) -o util/subhalo_stats $(LDFLAGS) $(OFLAGS) $(LIBS)
+
+with_debug:
+	@make reg EXTRA_FLAGS="$(DEBUGFLAGS)"
+with_hdf5:
+	@make reg EXTRA_FLAGS="$(OFLAGS) $(HDF5_FLAGS)"
+with_hdf5_debug:
+	@make reg EXTRA_FLAGS="$(DEBUGFLAGS) $(HDF5_FLAGS)"
+
 
 # Remove editor backups and built binaries.  Adjust as necessary
 # if additional build artifacts are created.
