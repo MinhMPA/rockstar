@@ -2,11 +2,7 @@
 #
 # This updated Makefile adds support for linking against the
 # libtirpc library, which provides the XDR/SunRPC routines
-# required by the tipsy I/O code.  It also moves all library
-# references to the end of the link commands to ensure that
-# undefined symbols are resolved correctly.  Finally, it
-# defines _DEFAULT_SOURCE to silence deprecation warnings
-# from glibc.
+# required by the tipsy I/O code.
 
 ##############################
 # Compiler and flags
@@ -32,7 +28,9 @@ OFLAGS  ?= -shared
 
 # Optional flags
 ## HDF5 format support
-HDF5_HOME ?= "/mpcdf/soft/SLE_15/packages/skylake/hdf5/intel_21.5.0-2021.5.0-impi_2021.5-2021.5.0/1.14.0"
+HDF5_HOME ?= <PATH_TO_HDF5_BUILD>
+###EXAMPLE:
+### HDF5_HOME ?= "/mpcdf/soft/SLE_15/packages/skylake/hdf5/intel_21.5.0-2021.5.0-impi_2021.5-2021.5.0/1.14.0"
 HDF5_INC = ${HDF5_HOME}/include
 HDF5_LIB = ${HDF5_HOME}/lib
 HDF5_FLAGS = -DH5_USE_16_API -lhdf5 -DENABLE_HDF5 -I${HDF5_INC} -L${HDF5_LIB}
@@ -145,15 +143,16 @@ parents:
 substats:
 	$(CC) $(CFLAGS) util/subhalo_stats.c $(CFILES) -o util/subhalo_stats $(LDFLAGS) $(OFLAGS) $(LIBS)
 
+# Build for debugging
 with_debug:
 	@make reg EXTRA_FLAGS="$(DEBUGFLAGS)"
+# Build with support for HDF5 format
 with_hdf5:
 	@make reg EXTRA_FLAGS="$(OFLAGS) $(HDF5_FLAGS)"
+# Build for HDF5 support and debugging
 with_hdf5_debug:
 	@make reg EXTRA_FLAGS="$(DEBUGFLAGS) $(HDF5_FLAGS)"
 
-
-# Remove editor backups and built binaries.  Adjust as necessary
-# if additional build artifacts are created.
+# Remove editor backups and built binaries.
 clean:
 	rm -f *~ io/*~ inet/*~ util/*~ rockstar util/redo_bgc2 util/bgc2_to_ascii util/find_parents util/subhalo_stats librockstar.so
